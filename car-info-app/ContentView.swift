@@ -97,45 +97,35 @@ let cars: [Car] = [teslaModelX, teslaModelY, kiaK5, kiaK8, kiaK9, prius, grandeu
 struct ContentView: View {
     
     var body: some View {
-        List {
-            Section(header: Text("Electric Cars")) {
-                // 필터를 통해 클래스 구분
-                ForEach(cars.filter { $0 is ElectricCar }, id: \.id) { car in
-                    VStack{
-                        Text(car.brand)
-                        Text(car.modelName)
-//                        Text("전비 \(car.electricEfficiency)".formatted(style: "%.2f"))
-                        
+        NavigationStack {
+            List {
+                Section(header: Text("Electric Cars")) {
+                    // 필터를 통해 클래스 구분
+                    ForEach(cars.filter { $0 is ElectricCar }, id: \.id) { car in
+                        NavigationLink(destination: CarDetailView(car: car)) {       Text(car.modelName)
+                            
+                        }
                     }
                 }
-            }
-            Section(header: Text("Oil Cars")) {
-                ForEach(cars.filter { $0 is OilCar }.sorted(by: { $0.modelName > $1.modelName }), id: \.id) { car in
-                    VStack {
-                        Text(car.brand)
-                        Text(car.modelName)
-                            .font(.system(size: 24).bold())
-//                        Text(cars.isAutomatic ? "자동변속" : "수동변속")
-//                        Text(car.isGasoline ? "가솔린" : "")
-//                        Text("연비 \(UnitFuelEfficiency)km/h")
+                Section(header: Text("Oil Cars")) {
+                    ForEach(cars.filter { $0 is OilCar }.sorted(by: { $0.modelName > $1.modelName }), id: \.id) { car in
+                        NavigationLink(destination: CarDetailView(car: car)) {
+                            Text(car.modelName)
+                        }
                     }
                 }
-            }
-            Section(header: Text("Hybrid Cars")) {
-                ForEach(cars.filter { $0 is HybridCar }, id: \.id) { car in
-                    VStack {
-                        Text(car.brand)
-                        Text(car.modelName)
-                            .font(.system(size: 24).bold())
-//                        Text(car.isGasoline ? "가솔린" : "")
-//                        Text("연비 \(UnitFuelEfficiency)km/h")
-//                        Text("자율주행 \(car.autoLevel)")
+                Section(header: Text("Hybrid Cars")) {
+                    ForEach(cars.filter { $0 is HybridCar }, id: \.id) { car in
+                        NavigationLink(destination: CarDetailView(car: car)) {
+                            Text(car.modelName)
+                        }
                     }
                 }
+                
             }
-                    
+            .navigationTitle("Car List")
         }
-        .padding()
+        
     }
 }
 
@@ -144,10 +134,11 @@ struct CarDetailView: View {
     let car: Car
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 20) {
             Text(car.modelName)
                 .font(.largeTitle)
-                .fontWeight(.bold)
+                .fontWeight(.bold
+                )
             Text(car.getDetails())
                 .font(.body)
         }
@@ -156,5 +147,6 @@ struct CarDetailView: View {
 }
 
 #Preview {
-    CarDetailView(car: teslaModelY)
+    ContentView()
+//    CarDetailView(car: teslaModelY)
 }
