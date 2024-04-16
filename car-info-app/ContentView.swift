@@ -1,6 +1,20 @@
 import SwiftUI
 
-class Car: Identifiable {
+protocol CarDescriptionProtocol {
+    var brand: String { get }
+    var modelName: String { get }
+    var year: Int { get }
+    
+    func getDetails() -> String
+}
+
+extension CarDescriptionProtocol {
+    func getDetails() -> String {
+        return "Brand: \(brand)\nModel: \(modelName)\nYear: \(year)"
+    }
+}
+
+class Car: Identifiable, CarDescriptionProtocol{
     var brand: String
     var modelName: String
     var year: Int
@@ -80,20 +94,67 @@ let grandeurHybrid: HybridCar = HybridCar(brand: "Hyundai", modelName: "그렌�
 // 리스트 생성
 let cars: [Car] = [teslaModelX, teslaModelY, kiaK5, kiaK8, kiaK9, prius, grandeurHybrid]
 
-
 struct ContentView: View {
-
+    
     var body: some View {
         List {
-            ForEach(cars, id: \.id) { car in
-                Text(car.modelName)
+            Section(header: Text("Electric Cars")) {
+                // 필터를 통해 클래스 구분
+                ForEach(cars.filter { $0 is ElectricCar }, id: \.id) { car in
+                    VStack{
+                        Text(car.brand)
+                        Text(car.modelName)
+//                        Text("전비 \(car.electricEfficiency)".formatted(style: "%.2f"))
+                        
+                    }
+                }
             }
+            Section(header: Text("Oil Cars")) {
+                ForEach(cars.filter { $0 is OilCar }.sorted(by: { $0.modelName > $1.modelName }), id: \.id) { car in
+                    VStack {
+                        Text(car.brand)
+                        Text(car.modelName)
+                            .font(.system(size: 24).bold())
+//                        Text(cars.isAutomatic ? "자동변속" : "수동변속")
+//                        Text(car.isGasoline ? "가솔린" : "")
+//                        Text("연비 \(UnitFuelEfficiency)km/h")
+                    }
+                }
+            }
+            Section(header: Text("Hybrid Cars")) {
+                ForEach(cars.filter { $0 is HybridCar }, id: \.id) { car in
+                    VStack {
+                        Text(car.brand)
+                        Text(car.modelName)
+                            .font(.system(size: 24).bold())
+//                        Text(car.isGasoline ? "가솔린" : "")
+//                        Text("연비 \(UnitFuelEfficiency)km/h")
+//                        Text("자율주행 \(car.autoLevel)")
+                    }
+                }
+            }
+                    
         }
         .padding()
     }
 }
 
 
+struct CarDetailView: View {
+    let car: Car
+    
+    var body: some View {
+        VStack {
+            Text(car.modelName)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            Text(car.getDetails())
+                .font(.body)
+        }
+        .padding()
+    }
+}
+
 #Preview {
-    ContentView()
+    CarDetailView(car: teslaModelY)
 }
