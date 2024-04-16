@@ -8,11 +8,11 @@ protocol CarDescriptionProtocol {
     func getDetails() -> String
 }
 
-extension CarDescriptionProtocol {
-    func getDetails() -> String {
-        return "Brand: \(brand)\nModel: \(modelName)\nYear: \(year)"
-    }
-}
+//extension CarDescriptionProtocol {
+//    func getDetails() -> String {
+//        return "Brand: \(brand)\nModel: \(modelName)\nYear: \(year)"
+//    }
+//}
 
 class Car: Identifiable, CarDescriptionProtocol{
     var brand: String
@@ -31,6 +31,10 @@ class Car: Identifiable, CarDescriptionProtocol{
         self.weight = weight
         self.height = height
     }
+    
+    func getDetails() -> String {
+        return "Brand: \(brand)\nModel: \(modelName)\nYear: \(year)"
+    }
 }
 
 class ElectricCar: Car {
@@ -44,6 +48,11 @@ class ElectricCar: Car {
         self.autoLevel = autoLevel
         super.init(brand: brand, modelName: modelName, year: year, doorCount: doorCount, weight: weight, height: height)
     }
+    
+    // 오버라이딩은 extension에 쓰인 함수로 바로 불가능하고, 부모 클래스에 해당 함수가 있어야 함
+    override func getDetails() -> String {
+        return super.getDetails() + "\n전비: \(electricEfficiency)km/h\n충전시간: \(fullChargeHours)시간\n자율주행: \(autoLevel)단계"
+    }
 }
 
 class OilCar: Car {
@@ -56,6 +65,12 @@ class OilCar: Car {
         self.fuelEfficiency = fuelEfficiency
         self.isGasoline = isGasoline
         super.init(brand: brand, modelName: modelName, year: year, doorCount: doorCount, weight: weight, height: height)
+    }
+    
+    override func getDetails() -> String {
+        let automaticType = isAutomatic ? "자동변속" : "수동변속"
+        let oilType = isGasoline ? "가솔린" : "디젤"
+        return super.getDetails() + "\n\(automaticType)\n\(oilType)\n연비: \(fuelEfficiency)km/h"
     }
 }
 
@@ -73,6 +88,11 @@ class HybridCar: Car {
         self.isGasoline = isGasoline
         self.autoLevel = autoLevel
         super.init(brand: brand, modelName: modelName, year: year, doorCount: doorCount, weight: weight, height: height)
+    }
+    
+    override func getDetails() -> String {
+        let oilType = isGasoline ? "가솔린" : "디젤"
+        return super.getDetails() + "\n\(oilType)\n연비: \(fuelEfficiency)km/h\n자율주행: \(autoLevel)단계"
     }
 }
 
